@@ -49,6 +49,22 @@ LAST_AMN_AND_YEAR="${LAST_AMN}${THIS_YEAR}" # "apr2044"
 if [[ "$LAST_AMN" == "dec" ]]; then
     LAST_AMN_AND_YEAR="${LAST_AMN}${LAST_YEAR}"
 fi
+
+THIS_MONTH_DIGIT=$(date +'%m')
+LAST_MONTH_DIGIT=$(date +'%m' -d 'last month')
+NEXT_MONTH_DIGIT=$(date +'%m' -d 'next month')
+THIS_YEAR_DIGIT=$(date +'%y' -d 'this year')
+LAST_YEAR_DIGIT=$(date +'%y' -d 'last year')
+NEXT_YEAR_DIGIT=$(date +'%y' -d 'next year')
+
+if [[ "$((THIS_MONTH_DIGIT))" > 6 ]]; then
+    THIS_FY_DIGIT="${THIS_YEAR_DIGIT}${NEXT_YEAR_DIGIT}"
+    LAST_FY_DIGIT="${LAST_YEAR_DIGIT}${THIS_YEAR_DIGIT}"
+else
+    THIS_FY_DIGIT="${LAST_YEAR_DIGIT}${THIS_YEAR_DIGIT}"
+    LAST_FY_DIGIT="$((LAST_YEAR_DIGIT - 1))${LAST_YEAR_DIGIT}"
+fi
+
 # First Day Of Month x Months Ago (may be used for specific Ledger reports)
 
 function ledxact () {
@@ -141,3 +157,4 @@ alias lmclean="rm ./tmp/*"
 
 # Source this file in the current working directory
 source alias.local 2>/dev/null
+
