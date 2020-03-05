@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 
 import re
 import sys
@@ -82,7 +82,7 @@ def main(argv=None):
     account_underscore = account_colon.replace(":", "___")
     csv_filename = argv[2]
     f = open(CONFIG_FILE, 'r')
-    cfg = yaml.load(f)
+    cfg = yaml.load(f, Loader=yaml.FullLoader)
     if account_underscore not in cfg:
         print("Cannot find accout {} in config file ({}).".
               format(account_colon, CONFIG_FILE))
@@ -95,7 +95,7 @@ def main(argv=None):
 
         # Modify CSV file (delete/modify lines, add header, ...).
         _, tmp_csv_filename = tempfile.mkstemp()
-        with open(csv_filename) as csv_fh:
+        with open(csv_filename, errors='replace') as csv_fh:
             lines = csv_fh.readlines()
             lines = [re.sub(r'[^\x00-\x7F]+', '_', l) for l in lines]
             lines = lines[int(acfg['ignored_header_lines']):]
@@ -121,11 +121,11 @@ def main(argv=None):
         # Use Ledger to convert the modified CSV file.
         cmd = 'ledger -f {} convert {}'.format(LEDGER_FILE, tmp_csv_filename)
         cmd += ' --input-date-format "{}"'.format(acfg['date_format'])
-        cmd += ' --account {}'.format(account_colon)
+        cmd += ' --account "{}"'.format(account_colon)
         cmd += ' --generated'  # pin automated transactions
         cmd += ' {}'.format(acfg['ledger_args'])
         cmd += ' | sed -e "s/\(^\s\+.*\s\+\)\([-0-9\.]\+\)$/\\1{}\\2/g"'.\
-            format(acfg['currency'].encode('utf8'))
+            format(acfg['currency'].encode('utf8').decode())
         try:
             cmd += ' | sed -e "s/Expenses:Unknown/{}/g"'.\
                 format(acfg['expenses_unknown'])
@@ -136,10 +136,10 @@ def main(argv=None):
         cmd += ' > {}'.format(tmp_journal_filename)
         os.system(cmd)
 
-        # For every trannsaction, add the correspinding CSV file line to the
+        # For every trannsaction, add the corresponding CSV file line to the
         # generated journal file.
         new_lines = []
-        with open(tmp_journal_filename, 'a+') as fh:
+        with open(tmp_journal_filename, 'r') as fh:
             i = 0
             for line in fh.readlines():
                 new_lines.append(line)
