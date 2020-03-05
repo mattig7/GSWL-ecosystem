@@ -156,5 +156,5 @@ alias lmmake="cat \$(listTmpFiles) > $ATMPFILE && ledger $LEDGERARGS -f $ATMPFIL
 alias lmclean="rm ./tmp/*"
 
 # Source this file in the current working directory
-source "$FINANCE_DIRECTORY/alias.local" #2>/dev/null
+source alias.local 2>/dev/null
 
