@@ -6,7 +6,9 @@ from pathlib import Path
 import tempfile
 import logging
 
-ECOSYSTEM_CONFIG_FILE='./eco_config.yml'
+PRIVATE_DIR=Path(../GSWL-private)
+
+ECOSYSTEM_CONFIG_FILE=PRIVATE_dir/Path(eco_config.yml)
 
 #Set up logger to run until logging settings can be loaded from the config file.
 
@@ -20,11 +22,19 @@ streamHandler.setLevel(logging.DEBUG)
 streamHandler.setFormatter(logFormatter)
 
 logger.addHandler(streamHandler)
+logger.debug("Commencing program")
 
+logger.debug("Testing that yaml handling is present in python.")
 try:
     import yaml
 except ImportError:
     logger.critical('Missing yaml dependency. Please install with:\npip3 install yaml')
+    sys.exit(1)
+
+logger.debug(f"Testing that the ecosystem config file exists at {ECOSYSTEM_CONFIG_FILE}")
+
+if not ECOSYSTEM_CONFIG_FILE.exists():
+    logger.critical(f"The ecosystem config file was not found at: {ECOSYSTEM_CONFIG_FILE}. Exiting")
     sys.exit(1)
 
 f = open(ECOSYSTEM_CONFIG_FILE, 'r')

@@ -1,6 +1,8 @@
 #!/bin/bash
 
 LEDGER_ECOSYSTEM_DIR=$(dirname "$_") # needed for later
+LEDGER_PRIVATE_DIR=$LEDGER_ECOSYSTEM_DIR/../GSWL-private
+
 if [[ "$_" == "" && ! -z $BASH ]] ; then
     LEDGER_ECOSYSTEM_DIR=$(dirname "$BASH_SOURCE")
 fi
